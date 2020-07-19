@@ -8,14 +8,18 @@ const defaultText="*******************************************";
 const Block=({title,email,password})=>{
 
     const [show,setShow]=useState(false);
-    const [text,setText]=useState(defaultText)
+    const [text,setText]=useState(base64.decode(password))
     return (
+
     <CardView
         cardElevation={4}
         cardMaxElevation={4}
-        cornerRadius={20}>
+        cornerRadius={5}
 
-        <View style={{flex: 1,flexDirection: 'column'}}>
+        style={{position: "relative"}}
+        >
+
+        <View style={{flex: 1,flexDirection: 'column', width: '100%',margin: 10}}>
 
 
             <View stye={{flex: 1,flexDirection: 'row'}}>
@@ -29,12 +33,12 @@ const Block=({title,email,password})=>{
 
             </View>
 
-            <View style={{flex: 1,flexDirection: 'row'}}>
+            <View style={{flex: 1,flexDirection: 'row',marginTop: 10}}>
                 <Text>
-                    {text}
+                    {show?text:defaultText}
                 </Text>
 
-                <TouchableOpacity style={{width:30,height: 30}} onPress={handleShow}>
+                <TouchableOpacity style={{width:30,height: 30,marginLeft: 10}} onPress={handleShow}>
                 <FIcon
                     name={show?'eye-off':'eye'}
                     size={24}
@@ -54,10 +58,7 @@ const Block=({title,email,password})=>{
     function handleShow() {
 
         setShow(!show);
-        if (show)
-            setText(base64.decode(password));
-        else
-            setText(defaultText);
+
 
 
 

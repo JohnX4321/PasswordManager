@@ -1,9 +1,10 @@
 import React from "react";
 import AsyncStorage from '@react-native-community/async-storage';
-import {StyleSheet, Text, View, SafeAreaView, Dimensions} from "react-native";
+import {StyleSheet, Text, View} from "react-native";
 import Block from "../components/block";
 import RBSheet from 'react-native-raw-bottom-sheet';
 import EditBottomSheet from "../components/editBottomSheet";
+
 
 
 const template={
@@ -14,24 +15,13 @@ const template={
 
 const FETCH_KEY="PASSWORD_MANAGER";
 
-interface StateSingle {
-    name: string,
-    email: string,
-    password: string
-}
 
-interface State {
-    data: StateSingle[],
-    currEmail: string,
-    currTitle: string,
-    currPassword: string,
-    loading: boolean
-}
 
-export default class HomeScreen extends React.Component<void, State>{
+export default class HomeScreen extends React.Component{
 
-    data: any=''
-    bottomSheetRef=React.createRef<RBSheet>()
+    _isMounted=false;
+    data=''
+    bottomSheetRef=React.createRef()
 
     constructor() {
         super();
@@ -44,47 +34,54 @@ export default class HomeScreen extends React.Component<void, State>{
         }
     }
 
-    componentDidMount=async ()=> {
-        this.data=await AsyncStorage.getItem(FETCH_KEY)
+    componentDidMount() {
+        this._isMounted=true;
+        AsyncStorage.getItem(FETCH_KEY).then(res=>{
 
-        if (this.data.length>0&&this.data!=null) {
-            this.setState({data: JSON.parse(this.data),loading: false});
+                this.data=res;
+            if (this.data.length>0&&this.data!=null) {
+                this.setState({data: JSON.parse(this.data),loading: false});
 
-        }
+            }
+        })
 
 
+
+
+    }
+
+    componentWillUnmount() {
+        this._isMounted=false;
     }
 
     render() {
 
         if (this.state.loading)
             return (<Text>Loading</Text>)
-
-        return(
-
-
+        else
+            return(
 
 
 
-            <SafeAreaView style={styles.containerSafeArea}>
+
+
+            <View style={styles.container}>
                 <Text>LIST</Text>
 
-                <View style={styles.container}>
                 {
                     this.state.data.map((val,i)=>(
-                        <View style={{height: 125,padding: 5}}>
+                        <View style={{height: 500}}>
                             <Block email={val.email} password={val.password} title={val.name} key={i}/>
                         </View>
                     ))
                 }
-                </View>
 
 
 
 
-            </SafeAreaView>
+            </View>
 
-        )
+        );
     }
 
 }
@@ -92,18 +89,7 @@ export default class HomeScreen extends React.Component<void, State>{
 const styles=StyleSheet.create({
     container:{
         flex: 1,
-        justifyContent: "flex-start",
-        flexDirection: "column",
-        alignItems: "center",
-        margin: 10,
-        padding:5,
-        position: 'relative',
-
-    },
-    containerSafeArea:{
-        flex: 1,
-        position: 'relative',
-        backgroundColor: '#f5fcff'
+        flexDirection: 'column'
     }
 })
 
