@@ -20,9 +20,9 @@ const FETCH_KEY="PASSWORD_MANAGER";
 export default class AddScreen extends React.Component<any, State>{
 
     public readonly state: Readonly<State> = {
-        label:'For',
-        email: 'Email',
-        password: 'Pass'
+        label:'',
+        email: '',
+        password: ''
     }
 
     render() {
@@ -32,18 +32,21 @@ export default class AddScreen extends React.Component<any, State>{
             <TextInput
                 value={this.state.label}
                 onChange={(e)=>this.setState({label: e.nativeEvent.text})}
+                placeholder={"Name"}
                 keyboardType="default"
                 />
 
                 <TextInput
                     value={this.state.email}
                     onChange={(e)=>this.setState({email: e.nativeEvent.text})}
+                    placeholder={"Email"}
                     keyboardType="default"
                 />
 
                 <TextInput
                     value={this.state.password}
                     onChange={(e)=>this.setState({password: e.nativeEvent.text})}
+                    placeholder={"Password"}
                     keyboardType="default"
                 />
 

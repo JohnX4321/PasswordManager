@@ -1,6 +1,6 @@
 import React from "react";
 import AsyncStorage from '@react-native-community/async-storage';
-import {StyleSheet, Text, View, SafeAreaView, Dimensions} from "react-native";
+import {StyleSheet, Text, View, SafeAreaView, Dimensions, TouchableOpacity, TextInput, Button} from "react-native";
 import Block from "../components/block";
 import RBSheet from 'react-native-raw-bottom-sheet';
 import EditBottomSheet from "../components/editBottomSheet";
@@ -22,10 +22,9 @@ interface StateSingle {
 
 interface State {
     data: StateSingle[],
-    currEmail: string,
-    currTitle: string,
-    currPassword: string,
-    loading: boolean
+    selIndex: number,
+    loading: boolean,
+    edit: boolean
 }
 
 export default class HomeScreen extends React.Component<void, State>{
@@ -37,10 +36,9 @@ export default class HomeScreen extends React.Component<void, State>{
         super();
         this.state={
             data: [],
-            currEmail: '',
-            currTitle: '',
-            currPassword: '',
-            loading: true
+            selIndex: 0,
+            loading: true,
+            edit: false
         }
     }
 
@@ -53,7 +51,17 @@ export default class HomeScreen extends React.Component<void, State>{
         }
 
 
+
+
     }
+
+
+    // @ts-ignore
+    showBottomSheet=()=> {
+
+        this.bottomSheetRef.current?.open();
+            this.setState({edit: true})
+    };
 
     render() {
 
@@ -69,15 +77,43 @@ export default class HomeScreen extends React.Component<void, State>{
             <SafeAreaView style={styles.containerSafeArea}>
                 <Text>LIST</Text>
 
-                <View style={styles.container}>
+                <View style={styles.container} >
                 {
                     this.state.data.map((val,i)=>(
-                        <View style={{height: 125,padding: 5}}>
+                        <TouchableOpacity style={{height: 125,padding: 5}} onLongPress={()=>{
+                            this.setState({selIndex: i})
+                            this.showBottomSheet();
+                        }}>
                             <Block email={val.email} password={val.password} title={val.name} key={i}/>
-                        </View>
+                        </TouchableOpacity>
                     ))
                 }
                 </View>
+
+
+
+
+                <View style={{flex: 1,justifyContent: 'center',alignItems: 'center'}}>
+                    <RBSheet
+                        ref={this.bottomSheetRef} height={300} customStyles={{container:{justifyContent: 'center',alignItems: 'center'}}}>
+                        <EditBottomSheet
+                            index={this.state.selIndex}
+                            list={this.state.data}
+                        update={()=>{this.forceUpdate();
+                        this.bottomSheetRef.current?.close();
+                        }}/>
+
+                    </RBSheet>
+
+                </View>
+
+
+
+
+
+
+
+
 
 
 
@@ -88,6 +124,7 @@ export default class HomeScreen extends React.Component<void, State>{
     }
 
 }
+/**/
 
 const styles=StyleSheet.create({
     container:{
@@ -107,11 +144,5 @@ const styles=StyleSheet.create({
     }
 })
 
-/*<EditBottomSheet
-                    rbRef={this.bottomSheetRef}
-                    name={this.state.currTitle}
-                    email={this.state.currEmail}
-                    list={this.state.data}
-                    password={this.state.currPassword} />
-*/
+
 
